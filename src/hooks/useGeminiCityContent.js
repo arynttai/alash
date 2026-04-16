@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   fetchCityStoryFromGemini,
-  isGeminiConfigured,
-  NO_GEMINI_KEY_MESSAGE,
 } from '../utils/geminiApi.js'
 
 const DEBOUNCE_MS = 520
@@ -17,12 +15,6 @@ export function useGeminiCityContent(cityName, locationId) {
 
   const refresh = useCallback(async () => {
     if (!cityName || !locationId) return
-    if (!isGeminiConfigured()) {
-      setData(null)
-      setError(new Error(NO_GEMINI_KEY_MESSAGE))
-      setStatus('error')
-      return
-    }
     const id = ++requestId.current
     setStatus('loading')
     setError(null)
@@ -44,12 +36,6 @@ export function useGeminiCityContent(cityName, locationId) {
       setData(null)
       setError(null)
       setStatus('idle')
-      return
-    }
-    if (!isGeminiConfigured()) {
-      setData(null)
-      setError(new Error(NO_GEMINI_KEY_MESSAGE))
-      setStatus('error')
       return
     }
     setStatus('loading')

@@ -1,33 +1,15 @@
 /**
- * Vite подставляет только переменные с префиксом VITE_ (см. документацию Vite).
- * @see https://vitejs.dev/guide/env-and-mode.html
- *
- * Здесь мы используем OpenAI‑совместимый API Groq:
- *  - базовый URL: https://api.groq.com/openai/v1
- *  - ключ: VITE_GROQ_API_KEY
- *  - модель по умолчанию: llama-3.3-70b-versatile
+ * В продакшене (Vercel) ключ Groq нельзя держать в браузере.
+ * Поэтому фронт ходит на Serverless Function `/api/groq`, а ключ хранится на сервере.
  */
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY
-const GROQ_MODEL =
-  import.meta.env.VITE_GROQ_MODEL || 'llama-3.3-70b-versatile'
+const API_URL = '/api/groq'
 
 /** Сообщение об ошибке, если ключ не задан (обрабатывается в UI). */
 export const NO_GEMINI_KEY_MESSAGE = 'NO_GEMINI_KEY'
 
-let warnedMissingGroqKey = false
-
-function warnMissingGroqKeyOnce() {
-  if (warnedMissingGroqKey) return
-  warnedMissingGroqKey = true
-  if (import.meta.env.DEV) {
-    console.warn(
-      '[Alash] VITE_GROQ_API_KEY не задан или пуст. Скопируйте .env.example → .env, задайте ключ Groq и перезапустите `npm run dev`.',
-    )
-  }
-}
-
 export function isGeminiConfigured() {
-  return Boolean(String(GROQ_API_KEY ?? '').trim())
+  // Ключ находится на сервере, поэтому на клиенте всегда пытаемся.
+  return true
 }
 
 /** Распознаётся в UI для429 / лимитов */
@@ -40,17 +22,6 @@ export class GeminiApiError extends Error {
     this.status = status
     this.body = body
   }
-}
-
-export function getGeminiApiKey() {
-  const key = String(GROQ_API_KEY ?? '').trim()
-  if (!key) {
-    warnMissingGroqKeyOnce()
-    throw new Error(
-      'VITE_GROQ_API_KEY is missing. Add it to .env locally and restart the dev server.',
-    )
-  }
-  return key
 }
 
 function buildCityPrompt(cityName) {
@@ -102,40 +73,30 @@ function normalizePayload(raw) {
  * Использует JSON‑ответ; модель — GROQ_MODEL.
  */
 export async function fetchCityStoryFromGemini({ cityName }) {
-  const apiKey = getGeminiApiKey()
   const prompt = buildCityPrompt(cityName)
-  const url = 'https://api.groq.com/openai/v1/chat/completions'
-
-  const res = await fetch(url, {
+  const res = await fetch(API_URL, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: GROQ_MODEL,
-      temperature: 0.65,
-      max_tokens: 1024,
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You are a historian of the Alash Movement. You must reply ONLY with valid JSON. No markdown, no commentary.',
-        },
-        { role: 'user', content: prompt },
-      ],
-      response_format: { type: 'json_object' },
+      type: 'cityStory',
+      cityName,
+      prompt,
     }),
   })
 
   if (!res.ok) {
     const errText = await res.text()
+    let errCode = ''
     let apiMessage = ''
     try {
       const parsed = JSON.parse(errText)
+      errCode = parsed?.error?.code ?? ''
       apiMessage = parsed?.error?.message ?? ''
     } catch {
       /* ignore */
+    }
+    if (errCode === 'missing_key' || res.status === 401 || res.status === 403) {
+      throw new Error(NO_GEMINI_KEY_MESSAGE)
     }
     if (res.status === 429) {
       throw new GeminiApiError(
@@ -152,9 +113,9 @@ export async function fetchCityStoryFromGemini({ cityName }) {
   }
 
   const json = await res.json()
-  const text = json?.choices?.[0]?.message?.content
+  const text = json?.content
   if (typeof text !== 'string' || !text.trim()) {
-    throw new Error('Empty response from Groq')
+    throw new Error('Empty response from AI')
   }
 
   const raw = extractJsonObject(text)
@@ -169,42 +130,30 @@ const BOKEIKHANOV_SYSTEM = `You are Alikhan Bukeikhanov (Әлихан Бөкей
  * @param {string} userText
  */
 export async function fetchAlashChatReply({ history = [], userText }) {
-  const apiKey = getGeminiApiKey()
-  const url = 'https://api.groq.com/openai/v1/chat/completions'
-
   const safeHistory = Array.isArray(history) ? history : []
-  const recent = safeHistory.slice(-10)
-  const messages = [
-    { role: 'system', content: BOKEIKHANOV_SYSTEM },
-    ...recent.map((m) => ({
-      role: m.role === 'assistant' ? 'assistant' : 'user',
-      content: m.content,
-    })),
-    { role: 'user', content: userText },
-  ]
-
-  const res = await fetch(url, {
+  const res = await fetch(API_URL, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: GROQ_MODEL,
-      temperature: 0.72,
-      max_tokens: 1024,
-      messages,
+      type: 'chat',
+      history: safeHistory,
+      userText,
     }),
   })
 
   if (!res.ok) {
     const errText = await res.text()
+    let errCode = ''
     let apiMessage = ''
     try {
       const parsed = JSON.parse(errText)
+      errCode = parsed?.error?.code ?? ''
       apiMessage = parsed?.error?.message ?? ''
     } catch {
       /* ignore */
+    }
+    if (errCode === 'missing_key' || res.status === 401 || res.status === 403) {
+      throw new Error(NO_GEMINI_KEY_MESSAGE)
     }
     if (res.status === 429) {
       throw new GeminiApiError(
@@ -221,45 +170,39 @@ export async function fetchAlashChatReply({ history = [], userText }) {
   }
 
   const json = await res.json()
-  const text = json?.choices?.[0]?.message?.content
+  const text = json?.content
   if (typeof text !== 'string' || !text.trim()) {
-    throw new Error('Empty chat response from Groq')
+    throw new Error('Empty chat response from AI')
   }
   return text.trim()
 }
 
 export async function geminiGenerateJson({ prompt }) {
-  const apiKey = getGeminiApiKey()
-  const url = 'https://api.groq.com/openai/v1/chat/completions'
-
-  const res = await fetch(url, {
+  const res = await fetch(API_URL, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: GROQ_MODEL,
-      temperature: 0.65,
-      max_tokens: 1024,
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You must reply ONLY with valid JSON matching the requested structure. No markdown, no extra commentary.',
-        },
-        { role: 'user', content: prompt },
-      ],
-      response_format: { type: 'json_object' },
+      type: 'json',
+      prompt,
     }),
   })
 
   if (!res.ok) {
     const errText = await res.text()
-    throw new GeminiApiError(res.status, `Groq: ${res.status}`, errText)
+    let errCode = ''
+    try {
+      const parsed = JSON.parse(errText)
+      errCode = parsed?.error?.code ?? ''
+    } catch {
+      /* ignore */
+    }
+    if (errCode === 'missing_key' || res.status === 401 || res.status === 403) {
+      throw new Error(NO_GEMINI_KEY_MESSAGE)
+    }
+    throw new GeminiApiError(res.status, `AI: ${res.status}`, errText)
   }
 
   const json = await res.json()
-  const text = json?.choices?.[0]?.message?.content
+  const text = json?.content
   return extractJsonObject(text)
 }

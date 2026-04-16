@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next'
 import {
   fetchAlashChatReply,
   GeminiApiError,
-  isGeminiConfigured,
 } from '../utils/geminiApi.js'
 import { useMediaQuery } from '../hooks/useMediaQuery.js'
 
@@ -47,19 +46,6 @@ export default function AlashChatbot() {
     const q = input.trim()
     if (!q || loading) return
     setInput('')
-
-    if (!isGeminiConfigured()) {
-      setMessages((m) => [
-        ...m,
-        { id: nextMessageId(), role: 'user', content: q },
-        {
-          id: nextMessageId(),
-          role: 'assistant',
-          content: t('chat.noApiKey'),
-        },
-      ])
-      return
-    }
 
     const historyForApi = (messagesRef.current ?? []).map((x) => ({
       role: x.role,
