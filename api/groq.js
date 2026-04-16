@@ -59,13 +59,22 @@ async function groqChatCompletions({ apiKey, model, messages, responseFormat }) 
 }
 
 module.exports = async function handler(req, res) {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST')
-    return json(res, 405, { error: { message: 'Method not allowed' } })
-  }
-
   const apiKey = process.env.GROQ_API_KEY
   const model = process.env.GROQ_MODEL || DEFAULT_MODEL
+
+  // Safe diagnostics endpoint (does not reveal secrets).
+  if (req.method === 'GET') {
+    return json(res, 200, {
+      ok: true,
+      hasKey: Boolean(apiKey && String(apiKey).trim()),
+      model,
+    })
+  }
+
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'GET, POST')
+    return json(res, 405, { error: { message: 'Method not allowed' } })
+  }
 
   if (!apiKey || !String(apiKey).trim()) {
     return json(res, 500, {
