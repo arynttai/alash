@@ -227,16 +227,25 @@ export default function CityNavigator({
                       const fav = favoriteSet.has(c.id)
                       return (
                         <li key={c.id}>
-                          <button
-                            type="button"
+                          <div
+                            role="button"
+                            tabIndex={0}
                             onClick={() => {
                               onSelect?.(c.id)
                               if (!isDesktop) setOpen(false)
                             }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault()
+                                onSelect?.(c.id)
+                                if (!isDesktop) setOpen(false)
+                              }
+                            }}
                             className={[
-                              'w-full rounded-2xl border px-3 py-3 text-left',
+                              'w-full rounded-2xl border px-3 py-3 text-left outline-none',
                               'border-black/10 bg-white/70 active:bg-white',
                               active ? 'ring-2 ring-[#005F73]/30' : '',
+                              'focus:ring-2 focus:ring-[#005F73]/25',
                             ].join(' ')}
                           >
                             <div className="flex items-start justify-between gap-3">
@@ -269,7 +278,7 @@ export default function CityNavigator({
                                 <Heart className={fav ? 'h-4 w-4 fill-current' : 'h-4 w-4'} />
                               </button>
                             </div>
-                          </button>
+                          </div>
                         </li>
                       )
                     })}

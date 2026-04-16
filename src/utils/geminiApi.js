@@ -3,6 +3,9 @@
  * Поэтому фронт ходит на Serverless Function `/api/groq`, а ключ хранится на сервере.
  */
 const API_URL = '/api/groq'
+const DEV_GROQ_KEY = import.meta.env.VITE_GROQ_API_KEY
+const DEV_GROQ_MODEL =
+  import.meta.env.VITE_GROQ_MODEL || 'llama-3.3-70b-versatile'
 
 /** Сообщение об ошибке, если ключ не задан (обрабатывается в UI). */
 export const NO_GEMINI_KEY_MESSAGE = 'NO_GEMINI_KEY'
@@ -53,6 +56,78 @@ function extractJsonObject(text) {
   }
 }
 
+async function fetchApiJson({ path, payload }) {
+  const res = await fetch(path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+
+  // Local Vite dev server doesn't serve Vercel /api routes.
+  if (import.meta.env.DEV && res.status === 404) {
+    return { __notFound: true }
+  }
+
+  const text = await res.text()
+  let parsed = null
+  try {
+    parsed = text ? JSON.parse(text) : null
+  } catch {
+    parsed = null
+  }
+
+  if (!res.ok) {
+    const errCode = parsed?.error?.code ?? ''
+    const apiMessage = parsed?.error?.message ?? ''
+    if (errCode === 'missing_key' || res.status === 401 || res.status === 403) {
+      throw new Error(NO_GEMINI_KEY_MESSAGE)
+    }
+    if (res.status === 429) {
+      throw new GeminiApiError(429, apiMessage || 'Quota exceeded (429)', text)
+    }
+    throw new GeminiApiError(res.status, apiMessage || `HTTP ${res.status}`, text)
+  }
+
+  return parsed
+}
+
+async function groqDirectChat({ messages, responseFormat }) {
+  const apiKey = String(DEV_GROQ_KEY ?? '').trim()
+  if (!apiKey) throw new Error(NO_GEMINI_KEY_MESSAGE)
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: DEV_GROQ_MODEL,
+      temperature: 0.72,
+      max_tokens: 1024,
+      messages,
+      ...(responseFormat ? { response_format: responseFormat } : {}),
+    }),
+  })
+
+  const text = await res.text()
+  let parsed = null
+  try {
+    parsed = text ? JSON.parse(text) : null
+  } catch {
+    parsed = null
+  }
+
+  if (!res.ok) {
+    const apiMessage = parsed?.error?.message ?? ''
+    if (res.status === 429) {
+      throw new GeminiApiError(429, apiMessage || 'Quota exceeded (429)', text)
+    }
+    throw new GeminiApiError(res.status, apiMessage || `HTTP ${res.status}`, text)
+  }
+
+  return parsed?.choices?.[0]?.message?.content ?? ''
+}
+
 function normalizePayload(raw) {
   const descriptions = {
     en: raw?.descriptions?.en ?? '',
@@ -74,46 +149,26 @@ function normalizePayload(raw) {
  */
 export async function fetchCityStoryFromGemini({ cityName }) {
   const prompt = buildCityPrompt(cityName)
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      type: 'cityStory',
-      cityName,
-      prompt,
-    }),
+  const api = await fetchApiJson({
+    path: API_URL,
+    payload: { type: 'cityStory', cityName, prompt },
   })
 
-  if (!res.ok) {
-    const errText = await res.text()
-    let errCode = ''
-    let apiMessage = ''
-    try {
-      const parsed = JSON.parse(errText)
-      errCode = parsed?.error?.code ?? ''
-      apiMessage = parsed?.error?.message ?? ''
-    } catch {
-      /* ignore */
-    }
-    if (errCode === 'missing_key' || res.status === 401 || res.status === 403) {
-      throw new Error(NO_GEMINI_KEY_MESSAGE)
-    }
-    if (res.status === 429) {
-      throw new GeminiApiError(
-        429,
-        apiMessage || 'Quota exceeded (429)',
-        errText,
-      )
-    }
-    throw new GeminiApiError(
-      res.status,
-      apiMessage || `HTTP ${res.status}`,
-      errText,
-    )
+  let text = api?.content
+  if (api?.__notFound) {
+    text = await groqDirectChat({
+      responseFormat: { type: 'json_object' },
+      messages: [
+        {
+          role: 'system',
+          content:
+            'You are a historian of the Alash Movement. Reply ONLY with valid JSON. No markdown, no commentary.',
+        },
+        { role: 'user', content: prompt },
+      ],
+    })
   }
 
-  const json = await res.json()
-  const text = json?.content
   if (typeof text !== 'string' || !text.trim()) {
     throw new Error('Empty response from AI')
   }
@@ -131,46 +186,26 @@ const BOKEIKHANOV_SYSTEM = `You are Alikhan Bukeikhanov (Әлихан Бөкей
  */
 export async function fetchAlashChatReply({ history = [], userText }) {
   const safeHistory = Array.isArray(history) ? history : []
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      type: 'chat',
-      history: safeHistory,
-      userText,
-    }),
+  const api = await fetchApiJson({
+    path: API_URL,
+    payload: { type: 'chat', history: safeHistory, userText },
   })
 
-  if (!res.ok) {
-    const errText = await res.text()
-    let errCode = ''
-    let apiMessage = ''
-    try {
-      const parsed = JSON.parse(errText)
-      errCode = parsed?.error?.code ?? ''
-      apiMessage = parsed?.error?.message ?? ''
-    } catch {
-      /* ignore */
-    }
-    if (errCode === 'missing_key' || res.status === 401 || res.status === 403) {
-      throw new Error(NO_GEMINI_KEY_MESSAGE)
-    }
-    if (res.status === 429) {
-      throw new GeminiApiError(
-        429,
-        apiMessage || 'Quota exceeded (429)',
-        errText,
-      )
-    }
-    throw new GeminiApiError(
-      res.status,
-      apiMessage || `HTTP ${res.status}`,
-      errText,
-    )
+  let text = api?.content
+  if (api?.__notFound) {
+    const recent = safeHistory.slice(-10).map((m) => ({
+      role: m?.role === 'assistant' ? 'assistant' : 'user',
+      content: String(m?.content ?? ''),
+    }))
+    text = await groqDirectChat({
+      messages: [
+        { role: 'system', content: BOKEIKHANOV_SYSTEM },
+        ...recent,
+        { role: 'user', content: userText },
+      ],
+    })
   }
 
-  const json = await res.json()
-  const text = json?.content
   if (typeof text !== 'string' || !text.trim()) {
     throw new Error('Empty chat response from AI')
   }
@@ -178,31 +213,25 @@ export async function fetchAlashChatReply({ history = [], userText }) {
 }
 
 export async function geminiGenerateJson({ prompt }) {
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      type: 'json',
-      prompt,
-    }),
+  const api = await fetchApiJson({
+    path: API_URL,
+    payload: { type: 'json', prompt },
   })
 
-  if (!res.ok) {
-    const errText = await res.text()
-    let errCode = ''
-    try {
-      const parsed = JSON.parse(errText)
-      errCode = parsed?.error?.code ?? ''
-    } catch {
-      /* ignore */
-    }
-    if (errCode === 'missing_key' || res.status === 401 || res.status === 403) {
-      throw new Error(NO_GEMINI_KEY_MESSAGE)
-    }
-    throw new GeminiApiError(res.status, `AI: ${res.status}`, errText)
+  let text = api?.content
+  if (api?.__notFound) {
+    text = await groqDirectChat({
+      responseFormat: { type: 'json_object' },
+      messages: [
+        {
+          role: 'system',
+          content:
+            'You must reply ONLY with valid JSON matching the requested structure. No markdown, no extra commentary.',
+        },
+        { role: 'user', content: prompt },
+      ],
+    })
   }
 
-  const json = await res.json()
-  const text = json?.content
   return extractJsonObject(text)
 }
