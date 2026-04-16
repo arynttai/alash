@@ -1,6 +1,34 @@
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY
-const GEMINI_MODEL =
-  import.meta.env.VITE_GEMINI_MODEL || 'gemini-2.0-flash'
+/**
+ * Vite подставляет только переменные с префиксом VITE_ (см. документацию Vite).
+ * @see https://vitejs.dev/guide/env-and-mode.html
+ *
+ * Здесь мы используем OpenAI‑совместимый API Groq:
+ *  - базовый URL: https://api.groq.com/openai/v1
+ *  - ключ: VITE_GROQ_API_KEY
+ *  - модель по умолчанию: llama-3.3-70b-versatile
+ */
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY
+const GROQ_MODEL =
+  import.meta.env.VITE_GROQ_MODEL || 'llama-3.3-70b-versatile'
+
+/** Сообщение об ошибке, если ключ не задан (обрабатывается в UI). */
+export const NO_GEMINI_KEY_MESSAGE = 'NO_GEMINI_KEY'
+
+let warnedMissingGroqKey = false
+
+function warnMissingGroqKeyOnce() {
+  if (warnedMissingGroqKey) return
+  warnedMissingGroqKey = true
+  if (import.meta.env.DEV) {
+    console.warn(
+      '[Alash] VITE_GROQ_API_KEY не задан или пуст. Скопируйте .env.example → .env, задайте ключ Groq и перезапустите `npm run dev`.',
+    )
+  }
+}
+
+export function isGeminiConfigured() {
+  return Boolean(String(GROQ_API_KEY ?? '').trim())
+}
 
 /** Распознаётся в UI для429 / лимитов */
 export class GeminiApiError extends Error {
@@ -15,12 +43,14 @@ export class GeminiApiError extends Error {
 }
 
 export function getGeminiApiKey() {
-  if (!GEMINI_API_KEY?.trim()) {
+  const key = String(GROQ_API_KEY ?? '').trim()
+  if (!key) {
+    warnMissingGroqKeyOnce()
     throw new Error(
-      'VITE_GEMINI_API_KEY is missing. Add it to .env locally and restart the dev server.',
+      'VITE_GROQ_API_KEY is missing. Add it to .env locally and restart the dev server.',
     )
   }
-  return GEMINI_API_KEY.trim()
+  return key
 }
 
 function buildCityPrompt(cityName) {
@@ -68,25 +98,33 @@ function normalizePayload(raw) {
 }
 
 /**
- * Calls Google AI Studio (Gemini) generateContent over REST.
- * Requires VITE_GEMINI_API_KEY in .env
+ * Исторический JSON‑нарратив по городу через Groq (OpenAI‑совместимый chat.completions).
+ * Использует JSON‑ответ; модель — GROQ_MODEL.
  */
 export async function fetchCityStoryFromGemini({ cityName }) {
-  const key = getGeminiApiKey()
+  const apiKey = getGeminiApiKey()
   const prompt = buildCityPrompt(cityName)
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
-    GEMINI_MODEL,
-  )}:generateContent?key=${encodeURIComponent(key)}`
+  const url = 'https://api.groq.com/openai/v1/chat/completions'
 
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
     body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.65,
-        responseMimeType: 'application/json',
-      },
+      model: GROQ_MODEL,
+      temperature: 0.65,
+      max_tokens: 1024,
+      messages: [
+        {
+          role: 'system',
+          content:
+            'You are a historian of the Alash Movement. You must reply ONLY with valid JSON. No markdown, no commentary.',
+        },
+        { role: 'user', content: prompt },
+      ],
+      response_format: { type: 'json_object' },
     }),
   })
 
@@ -114,10 +152,9 @@ export async function fetchCityStoryFromGemini({ cityName }) {
   }
 
   const json = await res.json()
-  const part = json?.candidates?.[0]?.content?.parts?.[0]
-  const text = part?.text
+  const text = json?.choices?.[0]?.message?.content
   if (typeof text !== 'string' || !text.trim()) {
-    throw new Error('Empty response from Gemini')
+    throw new Error('Empty response from Groq')
   }
 
   const raw = extractJsonObject(text)
@@ -131,31 +168,32 @@ const BOKEIKHANOV_SYSTEM = `You are Alikhan Bukeikhanov (Әлихан Бөкей
  * @param {{ role: 'user' | 'assistant', content: string }[]} history
  * @param {string} userText
  */
-export async function fetchAlashChatReply({ history, userText }) {
-  const key = getGeminiApiKey()
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
-    GEMINI_MODEL,
-  )}:generateContent?key=${encodeURIComponent(key)}`
+export async function fetchAlashChatReply({ history = [], userText }) {
+  const apiKey = getGeminiApiKey()
+  const url = 'https://api.groq.com/openai/v1/chat/completions'
 
-  const recent = history.slice(-10)
-  const contents = [
+  const safeHistory = Array.isArray(history) ? history : []
+  const recent = safeHistory.slice(-10)
+  const messages = [
+    { role: 'system', content: BOKEIKHANOV_SYSTEM },
     ...recent.map((m) => ({
-      role: m.role === 'assistant' ? 'model' : 'user',
-      parts: [{ text: m.content }],
+      role: m.role === 'assistant' ? 'assistant' : 'user',
+      content: m.content,
     })),
-    { role: 'user', parts: [{ text: userText }] },
+    { role: 'user', content: userText },
   ]
 
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
     body: JSON.stringify({
-      systemInstruction: { parts: [{ text: BOKEIKHANOV_SYSTEM }] },
-      contents,
-      generationConfig: {
-        temperature: 0.72,
-        maxOutputTokens: 1024,
-      },
+      model: GROQ_MODEL,
+      temperature: 0.72,
+      max_tokens: 1024,
+      messages,
     }),
   })
 
@@ -183,38 +221,45 @@ export async function fetchAlashChatReply({ history, userText }) {
   }
 
   const json = await res.json()
-  const part = json?.candidates?.[0]?.content?.parts?.[0]
-  const text = part?.text
+  const text = json?.choices?.[0]?.message?.content
   if (typeof text !== 'string' || !text.trim()) {
-    throw new Error('Empty chat response from Gemini')
+    throw new Error('Empty chat response from Groq')
   }
   return text.trim()
 }
 
 export async function geminiGenerateJson({ prompt }) {
-  const key = getGeminiApiKey()
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
-    GEMINI_MODEL,
-  )}:generateContent?key=${encodeURIComponent(key)}`
+  const apiKey = getGeminiApiKey()
+  const url = 'https://api.groq.com/openai/v1/chat/completions'
 
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
     body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.65,
-        responseMimeType: 'application/json',
-      },
+      model: GROQ_MODEL,
+      temperature: 0.65,
+      max_tokens: 1024,
+      messages: [
+        {
+          role: 'system',
+          content:
+            'You must reply ONLY with valid JSON matching the requested structure. No markdown, no extra commentary.',
+        },
+        { role: 'user', content: prompt },
+      ],
+      response_format: { type: 'json_object' },
     }),
   })
 
   if (!res.ok) {
     const errText = await res.text()
-    throw new GeminiApiError(res.status, `Gemini: ${res.status}`, errText)
+    throw new GeminiApiError(res.status, `Groq: ${res.status}`, errText)
   }
 
   const json = await res.json()
-  const text = json?.candidates?.[0]?.content?.parts?.[0]?.text
+  const text = json?.choices?.[0]?.message?.content
   return extractJsonObject(text)
 }

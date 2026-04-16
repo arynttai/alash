@@ -12,9 +12,9 @@ export default function LanguageSwitcher() {
   const current = (i18n.resolvedLanguage || i18n.language || 'en').split('-')[0]
 
   return (
-    <div className="inline-flex items-center gap-2 rounded-xl border border-black/10 bg-white/40 px-2 py-1.5 backdrop-blur">
-      <Globe className="h-4 w-4 text-slate-700" />
-      <div className="flex items-center gap-1">
+    <div className="inline-flex items-center gap-1 rounded-xl border border-black/10 bg-white/40 px-1.5 py-1 backdrop-blur md:gap-2 md:px-2 md:py-1.5">
+      <Globe className="hidden h-4 w-4 text-slate-700 sm:block" />
+      <div className="flex items-center gap-0.5 md:gap-1">
         {LANGS.map((l) => {
           const active = current === l.code
           return (
@@ -23,10 +23,10 @@ export default function LanguageSwitcher() {
               type="button"
               onClick={() => i18n.changeLanguage(l.code)}
               className={[
-                'relative inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-[Merriweather]',
+                'relative inline-flex min-h-9 min-w-9 items-center justify-center gap-0.5 rounded-lg px-2 py-1.5 text-xs font-[Merriweather] md:min-h-0 md:min-w-0',
                 active
-                  ? 'bg-white/80 text-slate-900 border border-black/10'
-                  : 'text-slate-700 hover:bg-white/60',
+                  ? 'border border-black/10 bg-white/85 text-slate-900'
+                  : 'text-slate-700 active:bg-white/70 md:hover:bg-white/60',
               ].join(' ')}
               aria-pressed={active}
             >

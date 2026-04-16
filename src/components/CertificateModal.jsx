@@ -33,7 +33,7 @@ export default function CertificateModal() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-xl border border-[#005F73]/30 bg-[#005F73]/10 px-3 py-1.5 text-[11px] font-[Merriweather] text-[#005F73] hover:bg-[#005F73]/20"
+        className="inline-flex min-h-10 max-w-full items-center gap-2 rounded-xl border border-[#005F73]/30 bg-[#005F73]/10 px-3 py-2 text-[11px] font-[Merriweather] leading-tight text-[#005F73] active:bg-[#005F73]/20 md:min-h-0 md:py-1.5 md:hover:bg-[#005F73]/20"
       >
         <Award className="h-3.5 w-3.5" />
         {t('certificate.cta')}

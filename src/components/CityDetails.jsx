@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import { ExternalLink, ImageIcon, Loader2, RefreshCw } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { GeminiApiError } from '../utils/geminiApi.js'
+import { GeminiApiError, NO_GEMINI_KEY_MESSAGE } from '../utils/geminiApi.js'
 import NarratorButton from './NarratorButton.jsx'
 
 /** CC0 demo track (MDN sample) — replace with your narration when ready */
@@ -38,6 +38,8 @@ export default function CityDetails({
   const { t } = useTranslation()
   const isQuota =
     geminiError instanceof GeminiApiError && geminiError.status === 429
+  const isNoApiKey =
+    geminiError instanceof Error && geminiError.message === NO_GEMINI_KEY_MESSAGE
 
   const descriptions = geminiData?.descriptions ?? {}
   const imageUrls = useMemo(
@@ -91,12 +93,21 @@ export default function CityDetails({
         <div
           className={[
             'rounded-xl border px-3 py-3 text-xs font-[Merriweather]',
-            isQuota
-              ? 'border-amber-200/90 bg-amber-50/90 text-amber-950'
-              : 'border-red-200/80 bg-red-50/80 text-red-900',
+            isNoApiKey
+              ? 'border-slate-300/90 bg-slate-100/90 text-slate-900'
+              : isQuota
+                ? 'border-amber-200/90 bg-amber-50/90 text-amber-950'
+                : 'border-red-200/80 bg-red-50/80 text-red-900',
           ].join(' ')}
         >
-          {isQuota ? (
+          {isNoApiKey ? (
+            <div className="space-y-2">
+              <div className="font-[Playfair_Display] text-sm text-[#005F73]">
+                {t('cityDetails.noApiKeyTitle')}
+              </div>
+              <p className="leading-relaxed">{t('cityDetails.noApiKeyBody')}</p>
+            </div>
+          ) : isQuota ? (
             <div className="space-y-2">
               <div className="font-[Playfair_Display] text-sm text-amber-900">
                 {t('cityDetails.quotaTitle')}
@@ -158,22 +169,22 @@ export default function CityDetails({
             className="space-y-3 rounded-xl border border-black/10 bg-white/40 p-3"
           >
             <div className="text-[11px] font-[Merriweather] uppercase tracking-wide text-slate-500">
-              English
+              {t('cityDetails.langEn')}
             </div>
             <p className="text-sm leading-relaxed text-slate-800">
-              {descriptions.en || '—'}
+              {descriptions.en || t('cityDetails.emptyParagraph')}
             </p>
             <div className="text-[11px] font-[Merriweather] uppercase tracking-wide text-slate-500">
-              Қазақша
+              {t('cityDetails.langKz')}
             </div>
             <p className="text-sm leading-relaxed text-slate-800">
-              {descriptions.kz || '—'}
+              {descriptions.kz || t('cityDetails.emptyParagraph')}
             </p>
             <div className="text-[11px] font-[Merriweather] uppercase tracking-wide text-slate-500">
-              Русский
+              {t('cityDetails.langRu')}
             </div>
             <p className="text-sm leading-relaxed text-slate-800">
-              {descriptions.ru || '—'}
+              {descriptions.ru || t('cityDetails.emptyParagraph')}
             </p>
           </motion.div>
 
@@ -209,20 +220,7 @@ export default function CityDetails({
             </div>
           ) : null}
 
-          <div className="space-y-2 rounded-xl border border-black/10 bg-white/45 p-3">
-            <div className="font-[Playfair_Display] text-sm text-[#005F73]">
-              {t('cityDetails.audioTopic')}
-            </div>
-            <p className="text-xs font-[Merriweather] text-slate-700">
-              {audioTopic || t('cityDetails.audioTopicFallback')}
-            </p>
-            <audio className="mt-2 w-full" controls preload="metadata">
-              <source src={DEMO_AUDIO_URL} type="audio/mpeg" />
-            </audio>
-            <p className="text-[11px] font-[Merriweather] text-slate-500">
-              {t('cityDetails.demoAudioHint')}
-            </p>
-          </div>
+          {/* Audio demo removed for UX cleanliness on mobile. */}
         </>
       ) : null}
 

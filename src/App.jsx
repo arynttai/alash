@@ -17,21 +17,11 @@ export default function App() {
   const { t, i18n } = useTranslation()
   const [ambientOn, setAmbientOn] = useState(false)
   const lang = (i18n.resolvedLanguage || i18n.language || 'en').split('-')[0]
-  const helmetTitle =
-    lang === 'kz'
-      ? 'Alash Path — Алаш жолы (1905–1930)'
-      : lang === 'ru'
-        ? 'Alash Path — путь Алаш (1905–1930)'
-        : 'Alash Path — The Alash intelligentsia (1905–1930)'
-  const helmetDesc =
-    lang === 'kz'
-      ? 'Интерактивті карта: Алаш қозғалысы мен зиялылар желісі.'
-      : lang === 'ru'
-        ? 'Интерактивная карта движения Алаш и сети интеллигенции.'
-        : 'Interactive map of the Alash movement and its intellectual network.'
+  const helmetTitle = t('app.helmetTitle')
+  const helmetDesc = t('app.helmetDescription')
 
   return (
-    <div className="min-h-dvh bg-[#F4EBD0] text-slate-900">
+    <div className="alash-app-root flex min-h-dvh flex-col bg-[#F4EBD0] text-slate-900">
       <Helmet>
         <html lang={lang === 'kz' ? 'kk' : lang} />
         <title>{helmetTitle}</title>
@@ -49,24 +39,24 @@ export default function App() {
 
       <AmbientScape enabled={ambientOn} />
 
-      <header className="border-b border-black/10 bg-[#F4EBD0]/80 px-4 py-3 backdrop-blur md:px-6 md:py-4">
-        <div className="mx-auto flex max-w-6xl items-baseline justify-between gap-4">
-          <div>
-            <h1 className="font-[Playfair_Display] text-xl tracking-tight text-[#0b1b22] md:text-2xl">
+      <header className="shrink-0 border-b border-black/10 bg-[#F4EBD0]/80 px-3 py-2 pt-[max(0.5rem,env(safe-area-inset-top,0px))] backdrop-blur md:px-6 md:py-4">
+        <div className="mx-auto flex max-w-6xl items-start justify-between gap-2 md:items-baseline md:gap-4">
+          <div className="min-w-0 flex-1">
+            <h1 className="font-[Playfair_Display] text-lg leading-tight tracking-tight text-[#0b1b22] md:text-2xl">
               {t('app.title')}
             </h1>
-            <p className="font-[Merriweather] text-xs text-slate-700 md:text-sm">
+            <p className="mt-0.5 line-clamp-2 font-[Merriweather] text-[11px] leading-snug text-slate-700 md:mt-0 md:line-clamp-none md:text-sm">
               {t('app.subtitle')}
             </p>
           </div>
-          <div className="flex items-center gap-2 md:gap-3">
+          <div className="flex shrink-0 items-center gap-1.5 md:gap-3">
             <div className="hidden font-[Merriweather] text-xs text-slate-700 md:block">
               {t('app.hint')}
             </div>
             <button
               type="button"
               onClick={() => setAmbientOn((v) => !v)}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-black/10 bg-white/50 text-slate-700 hover:bg-white/80"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-black/10 bg-white/50 text-slate-700 active:bg-white/90 md:h-9 md:w-9 md:hover:bg-white/80"
               title={
                 ambientOn ? t('ambient.disable') : t('ambient.enable')
               }
@@ -84,7 +74,7 @@ export default function App() {
         </div>
       </header>
 
-      <main className="h-[calc(100dvh-64px)]">
+      <main className="alash-map-stage relative min-h-0 flex-1">
         <MapComponent />
       </main>
 

@@ -18,6 +18,7 @@ export function createPulsingEmblemDivIcon({ city }) {
   const label = escapeAttr(city)
 
   return L.divIcon({
+    /* Leaflet добавляет leaflet-div-icon; alash-divicon — для селектора в index.css */
     className: 'alash-divicon',
     iconSize: [44, 44],
     iconAnchor: [22, 44],

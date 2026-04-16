@@ -8,23 +8,55 @@
 }
 
 html,
-body,
-#root {
+body {
   height: 100%;
+  margin: 0;
+}
+
+/* Цепочка высоты: корень заполняет экран, дочерний flex может сжиматься (min-h-0). */
+#root {
+  min-height: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
 body {
-  margin: 0;
   background: var(--parchment);
   color: var(--charcoal);
   font-family: Merriweather, ui-serif, Georgia, Cambria, "Times New Roman", Times,
     serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Карта: без задержки двойного тапа, нормальные жесты */
+.alash-map-touch {
+  touch-action: manipulation;
+}
+
+.alash-app-root {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Область под карту: остаток под шапкой, без фиксированной высоты в px. */
+.alash-map-stage {
+  flex: 1 1 0%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .leaflet-container {
   width: 100%;
   height: 100%;
+  min-height: 280px;
+  flex: 1 1 auto;
   background: #eadfbe;
+}
+
+.leaflet-container.leaflet-map-root {
+  min-height: 0;
 }
 
 /* Neo‑vintage map treatment */
@@ -132,7 +164,11 @@ body {
   place-items: center;
   border-radius: 10px;
   border: 1px solid rgba(0, 95, 115, 0.55);
-  background: linear-gradient(145deg, rgba(244, 235, 208, 0.95), rgba(255, 255, 255, 0.75));
+  background: linear-gradient(
+    145deg,
+    rgba(244, 235, 208, 0.95),
+    rgba(255, 255, 255, 0.75)
+  );
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22);
 }
 
@@ -145,7 +181,11 @@ body {
   position: absolute;
   inset: -6px;
   border-radius: 14px;
-  background: radial-gradient(circle, rgba(0, 95, 115, 0.35), transparent 62%);
+  background: radial-gradient(
+    circle,
+    rgba(0, 95, 115, 0.35),
+    transparent 62%
+  );
   animation: alash-doc-ping 2.4s ease-out infinite;
   pointer-events: none;
 }
@@ -175,5 +215,3 @@ body {
     opacity: 0;
   }
 }
-
-

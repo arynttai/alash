@@ -2,9 +2,12 @@
   "app": {
     "title": "Alash Path",
     "subtitle": "An interactive StoryMap about the Alash intelligentsia (1905–1930)",
-    "hint": "Tap a marker to open city details"
+    "hint": "Tap a marker to open city details",
+    "helmetTitle": "Alash Path — The Alash intelligentsia (1905–1930)",
+    "helmetDescription": "Interactive map of the Alash movement and its intellectual network."
   },
   "common": {
+    "loading": "Loading…",
     "close": "Close",
     "back": "Back",
     "next": "Next",
@@ -15,6 +18,18 @@
     "location": "Location",
     "activeLocations": "Active locations",
     "tapToFly": "Tap/click → smooth fly"
+  },
+  "nav": {
+    "title": "City navigator",
+    "subtitle": "Search, favorites, and quick jump.",
+    "open": "Open navigator",
+    "searchPlaceholder": "Find a city",
+    "inputPlaceholder": "Type a city name…",
+    "favorite": "Add to favorites",
+    "unfavorite": "Remove from favorites",
+    "share": "Share link to this city",
+    "nearMe": "Nearest city",
+    "empty": "No results."
   },
   "eras": {
     "awakening": "Awakening",
@@ -32,7 +47,7 @@
     "audioFallbackTitle": "Audio",
     "ai": "AI context (placeholder)",
     "askAi": "Ask AI",
-    "aiHint": "This button shows where Gemini will be connected. For now, it returns a placeholder.",
+    "aiHint": "This block shows AI-generated context. If the API key is not configured, the local archive text is shown instead.",
     "audioMissingHint": "If a file can't be found, place it into public/audio/ or replace src with an external URL."
   },
   "timeline": {
@@ -43,7 +58,7 @@
     "tapHint": "Tap/click → smooth fly"
   },
   "cityDetails": {
-    "aiTitle": "AI story (Gemini)",
+    "aiTitle": "AI story",
     "refresh": "Refresh",
     "loading": "Generating historical narrative…",
     "suggestedImages": "Suggested archive images",
@@ -52,10 +67,16 @@
     "audioTopicFallback": "Suggested narration topic will appear here.",
     "demoAudioHint": "Demo audio (CC0 sample). Replace with your recording later.",
     "idle": "Select a city on the map.",
-    "quotaTitle": "Gemini quota exceeded (429)",
+    "quotaTitle": "AI quota exceeded (429)",
     "quotaBody": "Free-tier and project limits are used up or billing is not enabled. Check your plan in Google AI Studio, wait for the limit to reset, or enable billing. The text below is shown from the local archive (without AI).",
     "quotaLink": "Rate limits & quotas — documentation",
-    "offlineContextTitle": "Text from project archive (offline)"
+    "offlineContextTitle": "Text from project archive (offline)",
+    "langEn": "English",
+    "langKz": "Kazakh",
+    "langRu": "Russian",
+    "emptyParagraph": "—",
+    "noApiKeyTitle": "AI API key not configured",
+    "noApiKeyBody": "Add VITE_GROQ_API_KEY to your .env file (see .env.example), then restart the dev server. Local archive text below still works without AI."
   },
   "narrator": {
     "listen": "Listen to history",
@@ -68,7 +89,8 @@
     "welcome": "Salem. I am glad you are studying the Alash era. What would you like to know?",
     "placeholder": "Ask about the movement, figures, or events…",
     "thinking": "Thinking…",
-    "quota": "The AI quota is temporarily exceeded. Please try again later."
+    "quota": "The AI quota is temporarily exceeded. Please try again later.",
+    "noApiKey": "AI is not configured (missing VITE_GROQ_API_KEY). Add the key to .env and restart the app."
   },
   "ambient": {
     "enable": "Turn on quiet steppe ambience",

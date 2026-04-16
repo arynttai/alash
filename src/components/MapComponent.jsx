@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MapContainer, Marker, TileLayer, Tooltip, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet.markercluster'
-import { Feather } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import 'leaflet/dist/leaflet.css'
@@ -21,10 +20,12 @@ import InfoPanel from './InfoPanel.jsx'
 import Timeline from './Timeline.jsx'
 import GlassPanel from './ui/GlassPanel.jsx'
 import MapHud from './MapHud.jsx'
+import CityNavigator from './CityNavigator.jsx'
 import { createPulsingEmblemDivIcon } from '../map/PulsingEmblemMarker.js'
 import { createDocumentDivIcon } from '../map/DocumentMarkerIcon.js'
 import { useStoryAnalytics } from '../context/StoryAnalyticsContext.jsx'
 import { useCollectibles } from '../context/CollectiblesContext.jsx'
+import { useMediaQuery } from '../hooks/useMediaQuery.js'
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x,
@@ -38,6 +39,22 @@ function FlyTo({ coords }) {
     if (!coords) return
     map.flyTo(coords, Math.max(map.getZoom(), 5), { duration: 0.85 })
   }, [map, coords])
+  return null
+}
+
+function MapResize() {
+  const map = useMap()
+  useEffect(() => {
+    const fix = () => {
+      map.invalidateSize({ animate: false })
+    }
+    const t = window.setTimeout(fix, 0)
+    window.addEventListener('resize', fix)
+    return () => {
+      window.clearTimeout(t)
+      window.removeEventListener('resize', fix)
+    }
+  }, [map])
   return null
 }
 
@@ -76,16 +93,23 @@ const YEAR_MAX = 1930
 
 export default function MapComponent() {
   const { t } = useTranslation()
+  const isDesktop = useMediaQuery('(min-width: 768px)')
   const { recordCityClick } = useStoryAnalytics()
   const { collect, isCollected } = useCollectibles()
   const [year, setYear] = useState(1917)
   const [selectedId, setSelectedId] = useState(null)
-  const [pen, setPen] = useState({ x: 0, y: 0, show: false })
 
   const onSelect = useCallback(
     (id) => {
       recordCityClick(id)
       setSelectedId(id)
+      try {
+        const u = new URL(window.location.href)
+        if (id) u.searchParams.set('city', id)
+        window.history.replaceState({}, '', u.toString())
+      } catch {
+        /* ignore */
+      }
     },
     [recordCityClick],
   )
@@ -106,6 +130,22 @@ export default function MapComponent() {
     return locations.find((l) => l.id === selectedId) ?? null
   }, [selectedId])
 
+  useEffect(() => {
+    try {
+      const u = new URL(window.location.href)
+      const id = u.searchParams.get('city')
+      if (!id) return
+      const loc = locations.find((l) => l.id === id)
+      if (!loc) return
+      setSelectedId(id)
+      if (loc.startYear) setYear(Math.max(YEAR_MIN, Math.min(YEAR_MAX, loc.startYear)))
+    } catch {
+      /* ignore */
+    }
+    // only on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const chapters = useMemo(() => {
     return [...locations]
       .sort((a, b) => a.startYear - b.startYear)
@@ -115,6 +155,7 @@ export default function MapComponent() {
         chapterTitle: l.chapterTitle,
         yearRangeLabel: l.yearRangeLabel,
         startYear: l.startYear,
+        coords: l.coords,
       }))
   }, [])
 
@@ -122,36 +163,15 @@ export default function MapComponent() {
   const canCluster = typeof L.markerClusterGroup === 'function'
 
   return (
-    <div
-      className="relative h-full max-md:cursor-auto md:cursor-none"
-      onMouseMove={(e) => {
-        if (typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches) {
-          setPen({ x: e.clientX, y: e.clientY, show: true })
-        }
-      }}
-      onMouseLeave={() => setPen((p) => ({ ...p, show: false }))}
-    >
-      {pen.show ? (
-        <div
-          className="pointer-events-none fixed z-[5000] hidden text-[#005F73] drop-shadow md:block"
-          style={{
-            left: pen.x,
-            top: pen.y,
-            transform: 'translate(-50%, -50%)',
-          }}
-          aria-hidden
-        >
-          <Feather className="h-7 w-7 opacity-90" strokeWidth={1.25} />
-        </div>
-      ) : null}
-
+    <div className="alash-map-touch relative flex h-full min-h-0 flex-1 flex-col touch-manipulation">
       <MapContainer
         center={initialCenter}
         zoom={4}
         minZoom={3}
-        className="h-full w-full"
+        className="leaflet-map-root z-0 h-full min-h-[280px] w-full flex-1"
         zoomControl={true}
       >
+        <MapResize />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://opentopomap.org/">OpenTopoMap</a>'
           url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
@@ -201,25 +221,54 @@ export default function MapComponent() {
 
       <InfoPanel selected={selected} onClose={() => setSelectedId(null)} />
 
-      <div className="absolute top-3 left-3 right-3 z-[1100] md:right-auto md:w-[520px]">
-        <GlassPanel>
-          <ChapterRail
-            chapters={chapters}
-            selectedId={selectedId}
-            onSelect={(id) => {
-              const loc = locations.find((l) => l.id === id)
-              onSelect(id)
-              if (loc?.startYear) {
-                setYear(Math.max(YEAR_MIN, Math.min(YEAR_MAX, loc.startYear)))
-              }
-            }}
-          />
-        </GlassPanel>
+      <div className="pointer-events-none absolute top-0 left-0 right-0 z-[1100] p-2 pt-[max(0.5rem,env(safe-area-inset-top,0px))] md:p-3 md:pt-3">
+        <div className="pointer-events-auto mx-auto flex max-w-6xl items-center justify-end gap-2 md:ml-3 md:mr-auto md:w-[min(980px,calc(100%-1.5rem))]">
+          {isDesktop ? (
+            <GlassPanel className="shadow-lg flex-1 min-w-0">
+              <ChapterRail
+                chapters={chapters}
+                selectedId={selectedId}
+                onSelect={(id) => {
+                  const loc = locations.find((l) => l.id === id)
+                  onSelect(id)
+                  if (loc?.startYear) {
+                    setYear(
+                      Math.max(YEAR_MIN, Math.min(YEAR_MAX, loc.startYear)),
+                    )
+                  }
+                }}
+              />
+            </GlassPanel>
+          ) : null}
+
+          <div className="shrink-0">
+            <CityNavigator
+              allCities={chapters}
+              selectedId={selectedId}
+              onSelect={(id) => {
+                const loc = locations.find((l) => l.id === id)
+                onSelect(id)
+                if (loc?.startYear) {
+                  setYear(Math.max(YEAR_MIN, Math.min(YEAR_MAX, loc.startYear)))
+                }
+              }}
+              buildShareUrl={(id) => {
+                try {
+                  const u = new URL(window.location.href)
+                  u.searchParams.set('city', id)
+                  return u.toString()
+                } catch {
+                  return ''
+                }
+              }}
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="absolute bottom-3 left-3 right-3 z-[1100]">
-        <div className="mx-auto max-w-6xl">
-          <GlassPanel>
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-[1100] p-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))] md:p-3 md:pb-3">
+        <div className="pointer-events-auto mx-auto max-w-6xl">
+          <GlassPanel className="shadow-lg">
             <Timeline
               year={year}
               onYearChange={(y) => {
@@ -230,8 +279,8 @@ export default function MapComponent() {
               maxYear={YEAR_MAX}
               eras={eras}
             />
-            <div className="-mt-2 px-4 pb-4">
-              <div className="font-[Merriweather] text-xs text-slate-700">
+            <div className="-mt-1 px-3 pb-3 md:px-4 md:pb-4">
+              <div className="font-[Merriweather] text-[11px] text-slate-700 md:text-xs">
                 {t('common.activeLocations')}:{' '}
                 <span className="font-bold">{visibleLocations.length}</span>
               </div>
