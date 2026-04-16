@@ -8,6 +8,19 @@
 
 const DEFAULT_MODEL = 'llama-3.3-70b-versatile'
 
+// Ensure fetch exists across Node runtimes (Vercel may run older Node in some cases).
+// Undici is a lightweight official fetch implementation for Node.
+if (typeof globalThis.fetch !== 'function') {
+  try {
+    // eslint-disable-next-line global-require
+    const undici = require('undici')
+    // eslint-disable-next-line no-global-assign
+    globalThis.fetch = undici.fetch
+  } catch {
+    // If this fails, the function will throw later with a clear error.
+  }
+}
+
 function json(res, status, body) {
   res.statusCode = status
   res.setHeader('Content-Type', 'application/json; charset=utf-8')
