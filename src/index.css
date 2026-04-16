@@ -1,0 +1,179 @@
+@import "tailwindcss";
+
+/* App theme tokens */
+:root {
+  --parchment: #f4ebd0;
+  --teal: #005f73;
+  --charcoal: #1f2937;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--parchment);
+  color: var(--charcoal);
+  font-family: Merriweather, ui-serif, Georgia, Cambria, "Times New Roman", Times,
+    serif;
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  background: #eadfbe;
+}
+
+/* Neo‑vintage map treatment */
+.leaflet-tile {
+  filter: saturate(0.92) contrast(1.04) sepia(0.16);
+}
+
+.leaflet-control-zoom a {
+  background: rgba(244, 235, 208, 0.82) !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* Custom pulsing “Alash seal” markers (L.divIcon) */
+.leaflet-div-icon.alash-divicon {
+  background: transparent !important;
+  border: none !important;
+}
+
+.alash-marker {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  pointer-events: auto;
+}
+
+.alash-marker__ping {
+  position: absolute;
+  inset: 2px;
+  border-radius: 9999px;
+  background: rgba(0, 95, 115, 0.35);
+  animation: alash-marker-ping 1.85s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.alash-marker__core {
+  position: relative;
+  z-index: 1;
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at 30% 25%,
+    #c9a227 0%,
+    #8b6914 28%,
+    #005f73 72%,
+    #003d4a 100%
+  );
+  box-shadow:
+    0 0 0 2px rgba(201, 162, 39, 0.95),
+    0 6px 14px rgba(0, 0, 0, 0.28);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.alash-marker__ornament {
+  position: absolute;
+  inset: 5px;
+  border-radius: 9999px;
+  border: 1px dashed rgba(244, 235, 208, 0.55);
+  opacity: 0.9;
+}
+
+.alash-marker__letter {
+  position: relative;
+  z-index: 2;
+  font-family:
+    "Playfair Display",
+    ui-serif,
+    Georgia,
+    serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #f4ebd0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  line-height: 1;
+}
+
+@keyframes alash-marker-ping {
+  0% {
+    transform: scale(0.88);
+    opacity: 0.85;
+  }
+  70% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.alash-doc-divicon {
+  background: transparent !important;
+  border: none !important;
+}
+
+.alash-doc-marker {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 95, 115, 0.55);
+  background: linear-gradient(145deg, rgba(244, 235, 208, 0.95), rgba(255, 255, 255, 0.75));
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22);
+}
+
+.alash-doc-marker--done {
+  opacity: 0.72;
+  filter: saturate(0.85);
+}
+
+.alash-doc-marker__glow {
+  position: absolute;
+  inset: -6px;
+  border-radius: 14px;
+  background: radial-gradient(circle, rgba(0, 95, 115, 0.35), transparent 62%);
+  animation: alash-doc-ping 2.4s ease-out infinite;
+  pointer-events: none;
+}
+
+.alash-doc-marker--done .alash-doc-marker__glow {
+  animation: none;
+  opacity: 0.35;
+}
+
+.alash-doc-marker__body {
+  position: relative;
+  z-index: 2;
+  font-size: 16px;
+  line-height: 1;
+}
+
+@keyframes alash-doc-ping {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.75;
+  }
+  70% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+

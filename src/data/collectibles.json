@@ -1,0 +1,26 @@
+[
+  {
+    "id": "doc-qazaq-manifest",
+    "title": "«Qazaq» — редакционная линия (архивный снимок)",
+    "coords": [51.772, 55.102],
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/7/71/Kazakh_intelligentsia_%281918%29.jpg"
+  },
+  {
+    "id": "doc-alash-seal",
+    "title": "Печать автономии Алаш",
+    "coords": [50.415, 80.22],
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/80/Seal_of_the_Alash_Autonomy.svg"
+  },
+  {
+    "id": "doc-tauride-duma",
+    "title": "Таврический дворец — политическая сцена 1905–1907",
+    "coords": [59.939, 30.445],
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f4/121._St._Petersburg._Tauride_Palace.jpg"
+  },
+  {
+    "id": "doc-orenburg-map",
+    "title": "Оренбургская губерния, карта 1905",
+    "coords": [51.755, 55.12],
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Orenburg_Governorate_map%2C_1905.jpg"
+  }
+]

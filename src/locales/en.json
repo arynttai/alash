@@ -1,0 +1,101 @@
+{
+  "app": {
+    "title": "Alash Path",
+    "subtitle": "An interactive StoryMap about the Alash intelligentsia (1905–1930)",
+    "hint": "Tap a marker to open city details"
+  },
+  "common": {
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "reset": "Reset",
+    "year": "Year",
+    "chapters": "Chapters",
+    "timeline": "Timeline",
+    "location": "Location",
+    "activeLocations": "Active locations",
+    "tapToFly": "Tap/click → smooth fly"
+  },
+  "eras": {
+    "awakening": "Awakening",
+    "autonomy": "Autonomy",
+    "reconfiguration": "Reconfiguration"
+  },
+  "panel": {
+    "chapter": "Chapter",
+    "context": "Historical context",
+    "events": "Key events",
+    "figures": "Key figures",
+    "photos": "Photo gallery",
+    "audio": "Audio",
+    "noImage": "No image",
+    "audioFallbackTitle": "Audio",
+    "ai": "AI context (placeholder)",
+    "askAi": "Ask AI",
+    "aiHint": "This button shows where Gemini will be connected. For now, it returns a placeholder.",
+    "audioMissingHint": "If a file can't be found, place it into public/audio/ or replace src with an external URL."
+  },
+  "timeline": {
+    "eraChip": "{{range}}: {{label}}",
+    "yearLabel": "Year: {{year}}"
+  },
+  "chapters": {
+    "tapHint": "Tap/click → smooth fly"
+  },
+  "cityDetails": {
+    "aiTitle": "AI story (Gemini)",
+    "refresh": "Refresh",
+    "loading": "Generating historical narrative…",
+    "suggestedImages": "Suggested archive images",
+    "openImage": "Open source",
+    "audioTopic": "Narration topic",
+    "audioTopicFallback": "Suggested narration topic will appear here.",
+    "demoAudioHint": "Demo audio (CC0 sample). Replace with your recording later.",
+    "idle": "Select a city on the map.",
+    "quotaTitle": "Gemini quota exceeded (429)",
+    "quotaBody": "Free-tier and project limits are used up or billing is not enabled. Check your plan in Google AI Studio, wait for the limit to reset, or enable billing. The text below is shown from the local archive (without AI).",
+    "quotaLink": "Rate limits & quotas — documentation",
+    "offlineContextTitle": "Text from project archive (offline)"
+  },
+  "narrator": {
+    "listen": "Listen to history",
+    "stop": "Stop"
+  },
+  "chat": {
+    "toggle": "Open chat with Alikhan Bukeikhanov",
+    "title": "Ask Alikhan Bukeikhanov",
+    "subtitle": "Replies are styled as the Alash leader, grounded in history.",
+    "welcome": "Salem. I am glad you are studying the Alash era. What would you like to know?",
+    "placeholder": "Ask about the movement, figures, or events…",
+    "thinking": "Thinking…",
+    "quota": "The AI quota is temporarily exceeded. Please try again later."
+  },
+  "ambient": {
+    "enable": "Turn on quiet steppe ambience",
+    "disable": "Mute ambience"
+  },
+  "analytics": {
+    "title": "City clicks (local)",
+    "hint": "Stored in this browser only.",
+    "empty": "No data yet — open a few cities."
+  },
+  "certificate": {
+    "cta": "Member certificate (PDF)",
+    "modalTitle": "Alash Orda — member certificate",
+    "modalHint": "Enter your name as it should appear on the PDF.",
+    "namePlaceholder": "Your name",
+    "download": "Download PDF",
+    "guest": "Guest researcher",
+    "pdfTitle": "Certificate of appreciation",
+    "pdfLine1": "This certifies that",
+    "pdfBody": "has explored the Alash Path story map and located the hidden archival markers placed across Central Asia. Thank you for keeping memory of the Alash intelligentsia alive."
+  },
+  "collectibles": {
+    "progress": "Documents: {{found}} / {{total}}"
+  },
+  "compare": {
+    "title": "1917 vs today (slider)",
+    "slider": "Compare past and present"
+  }
+}
+

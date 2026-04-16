@@ -1,0 +1,298 @@
+[
+  {
+    "id": "st-petersburg",
+    "chapterTitle": "Пробуждение",
+    "city": "Санкт‑Петербург",
+    "countryHint": "Российская империя",
+    "coords": [
+      59.9311,
+      30.3609
+    ],
+    "startYear": 1905,
+    "endYear": 1907,
+    "era": {
+      "id": "awakening",
+      "label": "Пробуждение",
+      "range": "1905–1917",
+      "startYear": 1905,
+      "endYear": 1917
+    },
+    "yearRangeLabel": "1905–1907",
+    "highlightQuote": "«Слово в печати становится делом, когда за ним стоит общество»",
+    "keyEvents": [
+      "1905: политическая мобилизация и участие представителей степных областей в общероссийских дебатах",
+      "1906: деятельность в контексте I Государственной думы",
+      "Формирование сети контактов среди либеральных кругов и печати"
+    ],
+    "keyFigures": [
+      {
+        "name": "Әлихан Бөкейхан",
+        "portrait": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Alikhan_Bukeikhanov.jpg",
+        "note": "политический лидер Алаш"
+      },
+      {
+        "name": "Мұстафа Шоқай",
+        "portrait": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Mustafa_Shokay_in_youth_(cropped).jpg",
+        "note": "публицист и политический деятель"
+      }
+    ],
+    "media": {
+      "photos": [
+        {
+          "src": "https://upload.wikimedia.org/wikipedia/commons/f/f4/121._St._Petersburg._Tauride_Palace.jpg",
+          "alt": "Санкт‑Петербург, Таврический дворец (открытка нач. XX в., Wikimedia Commons)"
+        },
+        {
+          "src": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Conference_hall_Tauride_Palace.jpg",
+          "alt": "Зал заседаний Таврического дворца (место работы I Государственной думы, Wikimedia Commons)"
+        }
+      ],
+      "audio": [
+        {
+          "src": "/audio/stpetersburg-1905.mp3",
+          "title": "Чтение (демо): фрагмент публицистики 1905",
+          "durationHint": "0:38"
+        }
+      ]
+    },
+    "description": "Столица империи была пространством, где будущие лидеры Алаш получали образование, включались в общественно‑политическую жизнь и осваивали инструменты парламентской политики и публичной дискуссии."
+  },
+  {
+    "id": "orenburg",
+    "chapterTitle": "Голос в печати",
+    "city": "Оренбург",
+    "countryHint": "Российская империя",
+    "coords": [
+      51.7682,
+      55.0968
+    ],
+    "startYear": 1913,
+    "endYear": 1917,
+    "era": {
+      "id": "awakening",
+      "label": "Пробуждение",
+      "range": "1905–1917",
+      "startYear": 1905,
+      "endYear": 1917
+    },
+    "yearRangeLabel": "1913–1917",
+    "highlightQuote": "«Qazaq» — не просто газета, а инфраструктура модерности.",
+    "keyEvents": [
+      "1913: запуск и развитие газеты «Qazaq»",
+      "Обсуждение проектов автономии, образования и землепользования",
+      "Подготовка к общекыргызским (общекaзахским) съездам"
+    ],
+    "keyFigures": [
+      {
+        "name": "Ахмет Байтұрсынұлы",
+        "portrait": "https://upload.wikimedia.org/wikipedia/commons/2/27/Baitursynov.jpg",
+        "note": "лингвист, редактор и идеолог"
+      },
+      {
+        "name": "Міржақып Дулатұлы",
+        "portrait": "https://upload.wikimedia.org/wikipedia/commons/2/2b/Dulatov_Mirjakip.jpg",
+        "note": "публицист, писатель"
+      }
+    ],
+    "media": {
+      "photos": [
+        {
+          "src": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Orenburg_Governorate_map,_1905.jpg",
+          "alt": "Карта Оренбургской губернии, 1905 (Wikimedia Commons)"
+        },
+        {
+          "src": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Orenburg_Ural_bridge_frontview.jpg",
+          "alt": "Мост через Урал в Оренбурге (фото 2004, Wikimedia Commons)"
+        }
+      ],
+      "audio": [
+        {
+          "src": "/audio/qazaq-editorial.mp3",
+          "title": "Чтение (демо): редакционная заметка «Qazaq»",
+          "durationHint": "0:52"
+        }
+      ]
+    },
+    "description": "Оренбург стал одним из ключевых интеллектуальных центров: здесь концентрировалась редакционная и организационная работа вокруг «Qazaq», формировались политические программы и координировались инициативы движения.",
+    "compare": {
+      "oldSrc": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Orenburg_Governorate_map%2C_1905.jpg",
+      "newSrc": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Orenburg_Ural_bridge_frontview.jpg",
+      "oldLabel": "1905 · карта губернии",
+      "newLabel": "2004 · Урал, мост (Commons)"
+    }
+  },
+  {
+    "id": "semey-alash-qala",
+    "chapterTitle": "Автономия и управление",
+    "city": "Семей (Алаш‑Қала)",
+    "countryHint": "Российская республика / ранний советский период",
+    "coords": [
+      50.4111,
+      80.2275
+    ],
+    "startYear": 1917,
+    "endYear": 1920,
+    "era": {
+      "id": "autonomy",
+      "label": "Автономия",
+      "range": "1917–1920",
+      "startYear": 1917,
+      "endYear": 1920
+    },
+    "yearRangeLabel": "1917–1920",
+    "highlightQuote": "Символ «Алаш‑Қала» — попытка зафиксировать политическое воображение на карте.",
+    "keyEvents": [
+      "1917: работа восточного крыла правительства Алаш‑Орда",
+      "Переименование/закрепление образа города как «Алаш‑Қала» в политической символике периода",
+      "Организация административных и образовательных инициатив"
+    ],
+    "keyFigures": [
+      {
+        "name": "Халел Ғаббасов",
+        "portrait": "https://upload.wikimedia.org/wikipedia/commons/7/71/Kazakh_intelligentsia_(1918).jpg",
+        "note": "деятель Алаш‑Орда (восточное направление); портрет в Commons отсутствует — использовано групповое фото интеллигенции"
+      },
+      {
+        "name": "Жаһанша Досмұхамедов",
+        "portrait": "https://upload.wikimedia.org/wikipedia/commons/7/71/Kazakh_intelligentsia_(1918).jpg",
+        "note": "юрист и политический деятель; отдельного портрета в Commons нет — групповое фото 1918 г."
+      }
+    ],
+    "media": {
+      "photos": [
+        {
+          "src": "https://upload.wikimedia.org/wikipedia/commons/7/71/Kazakh_intelligentsia_(1918).jpg",
+          "alt": "Казахская интеллигенция, Семипалатинск, 1918 (Wikimedia Commons)"
+        },
+        {
+          "src": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Flag_of_Alash_Orda_Republic(historical).png",
+          "alt": "Исторический флаг Алаш (Wikimedia Commons)"
+        }
+      ],
+      "audio": [
+        {
+          "src": "/audio/alash-qala.mp3",
+          "title": "Чтение (демо): обращение/манифест периода 1917–1918",
+          "durationHint": "1:05"
+        }
+      ]
+    },
+    "description": "Семей в годы революции и Гражданской войны стал опорной точкой для восточного крыла Алаш‑Орда. Здесь решались вопросы управления, просвещения и сохранения политической субъектности в условиях стремительно меняющейся власти."
+  },
+  {
+    "id": "tashkent",
+    "chapterTitle": "Центр образования и печати",
+    "city": "Ташкент",
+    "countryHint": "Туркестан / СССР",
+    "coords": [
+      41.2995,
+      69.2401
+    ],
+    "startYear": 1920,
+    "endYear": 1926,
+    "era": {
+      "id": "reconfiguration",
+      "label": "Пересборка",
+      "range": "1920–1930",
+      "startYear": 1920,
+      "endYear": 1930
+    },
+    "yearRangeLabel": "1920‑е",
+    "highlightQuote": "После 1920‑го культурные стратегии становятся способом выживания и продолжения модернизации.",
+    "keyEvents": [
+      "1920‑е: культурно‑образовательные проекты и работа в печати",
+      "Дискуссии о национальной политике и модернизации",
+      "Активность ряда политических деятелей и интеллектуалов региона"
+    ],
+    "keyFigures": [
+      {
+        "name": "Тұрар Рысқұлов",
+        "portrait": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Turar_Ryskulov-1.jpg",
+        "note": "политический деятель"
+      },
+      {
+        "name": "Сәкен Сейфуллин",
+        "portrait": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Saken_Seifullin.jpg",
+        "note": "писатель, общественный деятель"
+      }
+    ],
+    "media": {
+      "photos": [
+        {
+          "src": "https://upload.wikimedia.org/wikipedia/commons/2/22/Cotton_textile_mill_interior_with_machines_producing_cotton_thread,_probably_in_Tashkent_LOC_9631428466.jpg",
+          "alt": "Текстильная фабрика (вероятно Ташкент), снимок LOC / Prokudin‑Gorskii (Wikimedia Commons)"
+        },
+        {
+          "src": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Prokudin-Gorskii-18.jpg",
+          "alt": "Сергей Прокудин‑Горский: кочевники, Средняя Азия, 1911 (Wikimedia Commons)"
+        }
+      ],
+      "audio": [
+        {
+          "src": "/audio/tashkent-poem.mp3",
+          "title": "Чтение (демо): стихотворный фрагмент 1920‑х",
+          "durationHint": "0:44"
+        }
+      ]
+    },
+    "description": "Ташкент в 1920‑е годы был важным узлом культурной и образовательной жизни региона. Здесь пересекались траектории интеллектуалов, работавших в сфере печати, просвещения и государственного строительства."
+  },
+  {
+    "id": "kyzylorda",
+    "chapterTitle": "Столица и институции",
+    "city": "Кызылорда",
+    "countryHint": "КазАССР (СССР)",
+    "coords": [
+      44.8528,
+      65.5092
+    ],
+    "startYear": 1925,
+    "endYear": 1929,
+    "era": {
+      "id": "reconfiguration",
+      "label": "Пересборка",
+      "range": "1920–1930",
+      "startYear": 1920,
+      "endYear": 1930
+    },
+    "yearRangeLabel": "1925–1929",
+    "highlightQuote": "Когда столица меняет адрес, меняется скорость и масштаб институциональных решений.",
+    "keyEvents": [
+      "1925: перенос столицы КазАССР в Кызылорду (период институционального строительства)",
+      "Развитие образовательных и издательских инициатив",
+      "Дебаты о языке, школе и культурной политике"
+    ],
+    "keyFigures": [
+      {
+        "name": "Смағұл Сәдуақасов",
+        "portrait": "https://upload.wikimedia.org/wikipedia/commons/7/71/Kazakh_intelligentsia_(1918).jpg",
+        "note": "общественный и государственный деятель; в Commons нет отдельного портрета — групповое фото 1918 г."
+      },
+      {
+        "name": "Елдес Омаров",
+        "portrait": "https://upload.wikimedia.org/wikipedia/commons/7/71/Kazakh_intelligentsia_(1918).jpg",
+        "note": "педагог, деятель просвещения; отдельного портрета в Commons нет"
+      }
+    ],
+    "media": {
+      "photos": [
+        {
+          "src": "https://upload.wikimedia.org/wikipedia/commons/8/80/Seal_of_the_Alash_Autonomy.svg",
+          "alt": "Печать автономии Алаш (Wikimedia Commons, SVG)"
+        },
+        {
+          "src": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Flag_of_Alash_Orda_Republic(historical).png",
+          "alt": "Исторический флаг Алаш (символика эпохи институционального строительства, Wikimedia Commons)"
+        }
+      ],
+      "audio": [
+        {
+          "src": "/audio/kyzylorda-manifesto.mp3",
+          "title": "Чтение (демо): общественный текст конца 1920‑х",
+          "durationHint": "0:57"
+        }
+      ]
+    },
+    "description": "Кызылорда в середине 1920‑х стала административным центром КазАССР. В этот период усилилась роль учреждений, печати и образовательных проектов, формировавших новую инфраструктуру общественной жизни."
+  }
+]
