@@ -75,8 +75,8 @@
     "langKz": "Казахский",
     "langRu": "Русский",
     "emptyParagraph": "—",
-    "noApiKeyTitle": "Ключ AI не настроен",
-    "noApiKeyBody": "Добавьте VITE_GROQ_API_KEY в файл .env (см. .env.example) и перезапустите сервер разработки. Текст из локального архива ниже доступен и без AI."
+    "noApiKeyTitle": "AI не настроен",
+    "noApiKeyBody": "Для Vercel: добавьте переменную окружения GROQ_API_KEY в настройках проекта и сделайте Redeploy. Для локальной разработки: добавьте VITE_GROQ_API_KEY в .env и перезапустите dev-сервер. Текст из архива ниже доступен и без AI."
   },
   "narrator": {
     "listen": "Слушать историю",
@@ -90,7 +90,7 @@
     "placeholder": "Вопрос о движении, людях или событиях…",
     "thinking": "Думаю…",
     "quota": "Квота AI временно исчерпана. Попробуйте позже.",
-    "noApiKey": "AI не настроен (нет VITE_GROQ_API_KEY). Добавьте ключ в .env и перезапустите приложение."
+    "noApiKey": "AI не настроен. На Vercel добавьте GROQ_API_KEY и сделайте Redeploy; локально — VITE_GROQ_API_KEY в .env."
   },
   "ambient": {
     "enable": "Тихий фон степи",

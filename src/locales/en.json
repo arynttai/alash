@@ -75,8 +75,8 @@
     "langKz": "Kazakh",
     "langRu": "Russian",
     "emptyParagraph": "—",
-    "noApiKeyTitle": "AI API key not configured",
-    "noApiKeyBody": "Add VITE_GROQ_API_KEY to your .env file (see .env.example), then restart the dev server. Local archive text below still works without AI."
+    "noApiKeyTitle": "AI not configured",
+    "noApiKeyBody": "On Vercel: add GROQ_API_KEY in Project Settings and redeploy. Locally: add VITE_GROQ_API_KEY to .env and restart the dev server. Local archive text below still works without AI."
   },
   "narrator": {
     "listen": "Listen to history",
@@ -90,7 +90,7 @@
     "placeholder": "Ask about the movement, figures, or events…",
     "thinking": "Thinking…",
     "quota": "The AI quota is temporarily exceeded. Please try again later.",
-    "noApiKey": "AI is not configured (missing VITE_GROQ_API_KEY). Add the key to .env and restart the app."
+    "noApiKey": "AI is not configured. On Vercel add GROQ_API_KEY and redeploy; locally add VITE_GROQ_API_KEY to .env."
   },
   "ambient": {
     "enable": "Turn on quiet steppe ambience",

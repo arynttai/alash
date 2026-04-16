@@ -75,8 +75,8 @@
     "langKz": "Қазақша",
     "langRu": "Орысша",
     "emptyParagraph": "—",
-    "noApiKeyTitle": "AI API кілті қойылмаған",
-    "noApiKeyBody": ".env файлына VITE_GROQ_API_KEY енгізіңіз (.env.example қараңыз) және dev серверді қайта іске қосыңыз. AIсыз төмендегі мұрағат мәтіні жұмыс істейді."
+    "noApiKeyTitle": "AI бапталмаған",
+    "noApiKeyBody": "Vercel үшін: Project Settings ішінде GROQ_API_KEY қосып, Redeploy жасаңыз. Жергілікті (dev) үшін: .env ішіне VITE_GROQ_API_KEY енгізіп, dev серверді қайта іске қосыңыз. AIсыз төмендегі мұрағат мәтіні жұмыс істейді."
   },
   "narrator": {
     "listen": "Тарихты тыңдау",
@@ -90,7 +90,7 @@
     "placeholder": "Қозғалыс, тұлғалар немесе оқиғалар туралы сұраңыз…",
     "thinking": "Ойлануда…",
     "quota": "AI квотасы уақытша таусылды. Кейінірек қайталап көріңіз.",
-    "noApiKey": "AI бапталмаған (VITE_GROQ_API_KEY жоқ). Кілтті .env ішіне қосып, қолданбаны қайта іске қосыңыз."
+    "noApiKey": "AI бапталмаған. Vercel-де GROQ_API_KEY қосып Redeploy жасаңыз; жергіліктіде .env ішіне VITE_GROQ_API_KEY енгізіңіз."
   },
   "ambient": {
     "enable": "Тыныш дала дыбысын қосу",
