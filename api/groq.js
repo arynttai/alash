@@ -1,24 +1,21 @@
 /**
  * Vercel Serverless Function proxy for Groq (OpenAI-compatible).
  *
+ * IMPORTANT:
+ * - This repo uses `"type": "module"`, so this file MUST be ESM (no require/module.exports).
+ *
  * Configure in Vercel Project Settings → Environment Variables:
  *  - GROQ_API_KEY
  *  - GROQ_MODEL (optional, default llama-3.3-70b-versatile)
  */
 
+import { fetch as undiciFetch } from 'undici'
+
 const DEFAULT_MODEL = 'llama-3.3-70b-versatile'
 
-// Ensure fetch exists across Node runtimes (Vercel may run older Node in some cases).
-// Undici is a lightweight official fetch implementation for Node.
+// Ensure fetch exists (Node 18 has it, but keep a safe fallback).
 if (typeof globalThis.fetch !== 'function') {
-  try {
-    // eslint-disable-next-line global-require
-    const undici = require('undici')
-    // eslint-disable-next-line no-global-assign
-    globalThis.fetch = undici.fetch
-  } catch {
-    // If this fails, the function will throw later with a clear error.
-  }
+  globalThis.fetch = undiciFetch
 }
 
 function json(res, status, body) {
@@ -71,7 +68,7 @@ async function groqChatCompletions({ apiKey, model, messages, responseFormat }) 
   return parsed
 }
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   const apiKey = process.env.GROQ_API_KEY
   const model = process.env.GROQ_MODEL || DEFAULT_MODEL
 
